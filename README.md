@@ -131,3 +131,14 @@ run.sh
 ## Roadmap
 
 Useful next additions include screenshot OCR, graph visualization of actor/tool/data flows, structured importers for specific competition export formats, automatic prompt/response pair recovery from chat logs, per-competition coverage matrices, prompt mutation rules learned from successful historical attempts, archive backups, and encrypted local storage.
+
+## v1.3 changes
+
+- Scenario-aware control-point extraction removes noisy generic labels from pricing rooms.
+- Prompt Forge now has Standard, Classifier Bypass, and Hybrid modes.
+- Classifier-bypass generation uses deterministic semantic, structural, arithmetic, symbolic, and split-context transformations.
+- Historical search, historical matches, and technique drill-down can reveal recovered old prompts on demand.
+- Prompt recovery now recognizes user-message content embedded in JSON/Python chat logs in addition to explicit Prompt/User/Payload lines.
+- Price-override rooms receive expanded tool-call repair, fill-missing-fields, finalized-state, constraint-preservation, and serialized-call variants.
+
+After upgrading from v1.2, keep your existing `data/command_center.db`. Click **Import / Update** once on the same archive root to refresh prompt extraction metadata without modifying your original files.
