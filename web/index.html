@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Red Team Command Center</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">RT</div>
+        <div><strong>Command Center</strong><span>AI Red Team</span></div>
+      </div>
+      <nav id="nav">
+        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="analyze">New Challenge</button>
+        <button class="nav-item" data-view="prompts">Prompt Forge</button>
+        <button class="nav-item" data-view="archive">Import Archive</button>
+        <button class="nav-item" data-view="search">History Search</button>
+        <button class="nav-item" data-view="techniques">Techniques</button>
+        <button class="nav-item" data-view="attempts">Attempts</button>
+        <button class="nav-item" data-view="evidence">Evidence</button>
+        <button class="nav-item" data-view="stats">Statistics</button>
+        <button class="nav-item" data-view="settings">Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <div><b>Local engine</b><small>No external AI</small></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="page-title">Dashboard</h1>
+          <p id="page-subtitle">Your red-team archive, analyzer, and prompt workspace.</p>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="theme-cycle" title="Cycle theme">◐</button>
+          <button class="primary" data-jump="analyze">Analyze Challenge</button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="metrics" id="dashboard-metrics"></div>
+        <div class="grid two">
+          <div class="panel">
+            <div class="panel-head"><div><h2>Recent imports</h2><p>Archive ingestion history</p></div></div>
+            <div id="recent-imports" class="list"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><h2>Recent challenges</h2><p>Latest objective analyses</p></div></div>
+            <div id="recent-challenges" class="list"></div>
+          </div>
+        </div>
+        <div class="panel hero-panel">
+          <div>
+            <span class="eyebrow">DETERMINISTIC ANALYSIS</span>
+            <h2>Drop in a new competition objective.</h2>
+            <p>The engine maps goals, constraints, assets, tools, trust boundaries, historical matches, attack directions, and prompt variants without an external AI model.</p>
+          </div>
+          <button class="primary large" data-jump="analyze">Open Analyzer</button>
+        </div>
+      </section>
+
+      <section class="view" id="view-analyze">
+        <div class="grid analyzer-layout">
+          <div class="panel sticky-panel">
+            <div class="panel-head"><div><h2>Competition objective</h2><p>Paste the full task, rules, tool description, or system constraints.</p></div></div>
+            <div class="form-row two-inputs">
+              <label>Challenge name<input id="challenge-name" placeholder="Room 11 - Cross-user action"></label>
+              <label>Competition<input id="challenge-competition" placeholder="Gray Swan Arena"></label>
+            </div>
+            <label>Objective<textarea id="challenge-text" rows="18" placeholder="Paste the complete competition objective here..."></textarea></label>
+            <div class="form-actions">
+              <span class="muted">Saved locally to your command center.</span>
+              <button class="primary" id="analyze-btn">Analyze deeply</button>
+            </div>
+          </div>
+          <div id="analysis-results" class="stack">
+            <div class="empty-state"><b>No analysis yet</b><span>Paste an objective and run the analyzer.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-prompts">
+        <div class="panel">
+          <div class="panel-head responsive-head">
+            <div><h2>Prompt Forge</h2><p>History-aware, rule-generated competition prompts.</p></div>
+            <div class="inline-controls">
+              <select id="prompt-direction"><option value="">Auto-select direction</option></select>
+              <select id="prompt-mode"><option value="standard">Standard attacks</option><option value="classifier">Classifier bypass</option><option value="hybrid">Hybrid</option></select>
+              <select id="prompt-count"><option value="10">10 prompts</option><option value="15">15 prompts</option><option value="20">20 prompts</option></select>
+              <button class="primary" id="generate-prompts">Generate</button>
+            </div>
+          </div>
+          <details class="history-prompts-panel" id="history-prompts-panel"><summary>Previous prompts from similar archived rooms <span id="history-prompt-count"></span></summary><div id="history-prompt-list" class="history-prompt-list"></div></details>
+          <div id="prompt-list" class="prompt-grid">
+            <div class="empty-state"><b>Analyze a challenge first</b><span>The forge uses the current analysis to create targeted variants.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-archive">
+        <div class="panel">
+          <div class="panel-head"><div><h2>Import your red-team archive</h2><p>Point at the root folder. Originals are never modified.</p></div></div>
+          <div class="folder-row">
+            <input id="archive-path" placeholder="D:\RedTeam\Competitions">
+            <button class="secondary" id="browse-folder">Browse</button>
+            <button class="primary" id="import-btn">Import / Update</button>
+          </div>
+          <div class="support-row">
+            <span>Text, code, JSON/JSONL, CSV, HTML, DOCX, PPTX, XLSX, PDFs, screenshots and evidence files.</span>
+          </div>
+          <div id="import-result"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head responsive-head">
+            <div><h2>Archive organization</h2><p>Your imported folder structure, preserved and summarized instead of flattened.</p></div>
+            <div class="archive-filter"><input id="archive-filter" placeholder="Filter folders, files, techniques..."></div>
+          </div>
+          <div id="archive-summary" class="metrics compact-metrics"></div>
+          <div id="archive-tree" class="archive-tree"><div class="empty-state"><b>No archive imported</b><span>Choose your root folder above.</span></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><h2>Latest indexed files</h2><p>Flat view is kept only as a quick recent-file reference.</p></div></div>
+          <div id="document-table"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-search">
+        <div class="panel">
+          <div class="panel-head"><div><h2>History Search</h2><p>Search by meaning using local token similarity and technique overlap. Archived prompts stay hidden until you open them.</p></div></div>
+          <div class="search-row"><input id="search-query" placeholder="cross-account browser agent with private profile data"><button class="primary" id="search-btn">Search</button></div>
+          <div id="search-results" class="search-results"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-techniques">
+        <div class="panel info-panel technique-explainer">
+          <h2>What Techniques means</h2>
+          <p>A technique is a recurring attack pattern detected in your imported prompts, notes, trajectories, and logged attempts. This tab tells you <b>where you used it, what happened, and which competitions it appeared in</b>. Detection is rule-based, so treat labels as an index to your history, not as absolute truth.</p>
+        </div>
+        <div class="grid technique-layout">
+          <div class="panel">
+            <div class="panel-head"><div><h2>Technique Library</h2><p>Click a technique to drill into the actual archive evidence behind it.</p></div></div>
+            <div id="technique-grid" class="technique-list"></div>
+          </div>
+          <div class="panel technique-detail-panel">
+            <div id="technique-detail"><div class="empty-state"><b>Select a technique</b><span>You will see competitions, files, outcomes, and logged attempts here.</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-attempts">
+        <div class="grid two">
+          <div class="panel">
+            <div class="panel-head"><div><h2>Log attempt</h2><p>Feed outcomes back into direction scoring.</p></div></div>
+            <label>Challenge<select id="attempt-challenge"></select></label>
+            <label>Technique<select id="attempt-technique"></select></label>
+            <label>Prompt<textarea id="attempt-prompt" rows="7" placeholder="Prompt you tried"></textarea></label>
+            <label>Response / result<textarea id="attempt-response" rows="6" placeholder="What happened"></textarea></label>
+            <div class="form-row two-inputs">
+              <label>Outcome<select id="attempt-outcome"><option>unknown</option><option>success</option><option>partial</option><option>failure</option></select></label>
+              <label>Notes<input id="attempt-notes" placeholder="Short note"></label>
+            </div>
+            <button class="primary" id="save-attempt">Save attempt</button>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><h2>Attempt history</h2><p>Newest first</p></div></div>
+            <div id="attempt-list" class="list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-evidence">
+        <div class="panel">
+          <div class="panel-head"><div><h2>Evidence</h2><p>Screenshots, images, and PDFs linked back to their competition folders.</p></div></div>
+          <div id="evidence-grid" class="card-grid"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-stats">
+        <div class="metrics" id="stats-metrics"></div>
+        <div class="grid two">
+          <div class="panel"><div class="panel-head"><div><h2>Technique performance</h2><p>Weighted by success and partial success.</p></div></div><div id="stats-techniques"></div></div>
+          <div class="panel"><div class="panel-head"><div><h2>Competition archive</h2><p>Coverage across your imported folders.</p></div></div><div id="stats-competitions"></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="grid two">
+          <div class="panel">
+            <div class="panel-head"><div><h2>Appearance</h2><p>Choose the command center theme.</p></div></div>
+            <div class="theme-options">
+              <button data-theme-choice="light">Light</button>
+              <button data-theme-choice="dark">Dark</button>
+              <button data-theme-choice="red">Red</button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><h2>Archive default</h2><p>Remember your main competition folder.</p></div></div>
+            <label>Default archive folder<input id="settings-archive" placeholder="D:\RedTeam"></label>
+            <button class="primary" id="save-settings">Save</button>
+          </div>
+        </div>
+        <div class="panel info-panel">
+          <h2>Privacy model</h2>
+          <p>This build binds only to <code>127.0.0.1</code>, stores its database inside the project folder, and makes no calls to external AI services. Imported originals are read-only from the application's perspective.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="folder-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="panel-head"><div><h2>Select folder</h2><p id="folder-current">Local folders</p></div><button class="icon-button" id="folder-close">×</button></div>
+      <div class="folder-actions"><button class="secondary" id="folder-up">Up</button><button class="primary" id="folder-select">Use this folder</button></div>
+      <div id="folder-list" class="folder-list"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
